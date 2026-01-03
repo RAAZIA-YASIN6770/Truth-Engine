@@ -48,7 +48,8 @@ def clean_project():
     moves = {
         "scenario_1.json": "data/scenario_1.json",
         "scenario_loader.py": "app/services/scenario_loader.py",
-        "__init__.py": "app/services/__init__.py"
+        "__init__.py": "app/services/__init__.py",
+        "app/scenario.html": "app/templates/scenario.html"
     }
     
     for src, dest in moves.items():

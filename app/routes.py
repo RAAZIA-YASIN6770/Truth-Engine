@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, flash
+from flask import Blueprint, render_template, request, flash  # type: ignore
 from app.services.scenario_loader import ScenarioLoader
 from app.services.logic_engine import LogicEngine
 
