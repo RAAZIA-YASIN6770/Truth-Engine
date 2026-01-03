@@ -1,0 +1,14 @@
+{
+    "id": 7,
+    "title": "Python Logic",
+    "statements": [
+        {"id": 1, "text": "int('10') converts a string to an integer."},
+        {"id": 2, "text": "range(3) generates numbers 0, 1, 2."},
+        {"id": 3, "text": "A while loop always runs at least once."}
+    ],
+    "solution": {
+        "false_statement_id": 3,
+        "explanation": "A while loop only runs if the condition is initially true; otherwise, it may never run."
+    },
+    "hint": "What happens if the condition is False right at the start?"
+}

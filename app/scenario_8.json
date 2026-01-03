@@ -1,0 +1,14 @@
+{
+    "id": 8,
+    "title": "Math & Shapes",
+    "statements": [
+        {"id": 1, "text": "2 is the only even prime number."},
+        {"id": 2, "text": "A hexagon has 5 sides."},
+        {"id": 3, "text": "7 squared equals 49."}
+    ],
+    "solution": {
+        "false_statement_id": 2,
+        "explanation": "A hexagon has 6 sides. A pentagon has 5 sides."
+    },
+    "hint": "Hexa usually refers to six."
+}

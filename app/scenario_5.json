@@ -1,0 +1,14 @@
+{
+    "id": 5,
+    "title": "Algebra & Geometry",
+    "statements": [
+        {"id": 1, "text": "The value of Pi is approximately 3.14."},
+        {"id": 2, "text": "The internal angles of a triangle add up to 180 degrees."},
+        {"id": 3, "text": "-5 is greater than -2."}
+    ],
+    "solution": {
+        "false_statement_id": 3,
+        "explanation": "In negative numbers, -2 is greater than -5 (it is closer to zero)."
+    },
+    "hint": "Think about temperature: is -5 degrees warmer or colder than -2?"
+}

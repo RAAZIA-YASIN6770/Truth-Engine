@@ -1,0 +1,14 @@
+{
+    "id": 9,
+    "title": "General Science",
+    "statements": [
+        {"id": 1, "text": "H2O is the chemical formula for water."},
+        {"id": 2, "text": "Sound travels faster than light."},
+        {"id": 3, "text": "Gravity pulls objects towards the Earth."}
+    ],
+    "solution": {
+        "false_statement_id": 2,
+        "explanation": "Light travels much faster than sound (think of seeing lightning before hearing thunder)."
+    },
+    "hint": "Do you hear thunder first or see the lightning first?"
+}

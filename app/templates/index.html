@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Truth Engine</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+    <div class="container">
+        <!-- Header Section -->
+        <header>
+            <h1>TRUTH ENGINE</h1>
+            <p class="subtitle">Identify the false statement to proceed.</p>
+        </header>
+
+        <!-- Level Selection (Glass Tiles) -->
+        <div class="level-grid">
+            <!-- Example Loop for Levels -->
+            {% for i in range(1, 11) %}
+            <a href="/level/{{ i }}" class="glass-panel level-btn {% if current_level == i %}active{% endif %}">
+                {{ i }}
+            </a>
+            {% endfor %}
+        </div>
+
+        <!-- Game Area -->
+        <main class="game-area">
+            {% if scenario %}
+                <div class="glass-panel" style="padding: 1rem; margin-bottom: 1rem;">
+                    <h2 style="margin:0; font-weight:400;">{{ scenario.title }}</h2>
+                </div>
+
+                <form id="quiz-form" action="/submit" method="POST">
+                    {% for statement in scenario.statements %}
+                    <label class="glass-panel card">
+                        <input type="radio" name="answer" value="{{ statement.id }}" style="display:none;" onchange="selectCard(this)">
+                        <span class="statement-text">{{ statement.text }}</span>
+                    </label>
+                    {% endfor %}
+                    
+                    <button type="submit" class="glass-panel submit-btn">Submit Analysis</button>
+                </form>
+            {% else %}
+                <div class="glass-panel card">
+                    <p>Select a level to begin initialization.</p>
+                </div>
+            {% endif %}
+        </main>
+    </div>
+
+    <script>
+        // Simple JS to handle visual selection state before submission
+        function selectCard(input) {
+            // Remove active style from all cards
+            document.querySelectorAll('.card').forEach(c => {
+                c.style.background = 'var(--glass-bg)';
+            });
+            // Add active style to selected card parent
+            input.parentElement.style.background = 'rgba(255, 255, 255, 0.15)';
+        }
+    </script>
+</body>
+</html>

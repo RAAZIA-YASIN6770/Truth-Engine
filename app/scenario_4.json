@@ -1,0 +1,14 @@
+{
+    "id": 4,
+    "title": "Python Data Types",
+    "statements": [
+        {"id": 1, "text": "len('hello') returns 5."},
+        {"id": 2, "text": "A tuple is mutable (changeable)."},
+        {"id": 3, "text": "Dictionaries store data in key-value pairs."}
+    ],
+    "solution": {
+        "false_statement_id": 2,
+        "explanation": "Tuples are immutable in Python; they cannot be changed after creation."
+    },
+    "hint": "Can you change an item in a tuple like you can in a list?"
+}

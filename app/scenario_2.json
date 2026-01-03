@@ -1,0 +1,14 @@
+{
+    "id": 2,
+    "title": "Basic Math",
+    "statements": [
+        {"id": 1, "text": "5 multiplied by 5 equals 25."},
+        {"id": 2, "text": "A square has 4 equal sides."},
+        {"id": 3, "text": "Division by zero results in 0."}
+    ],
+    "solution": {
+        "false_statement_id": 3,
+        "explanation": "Division by zero is undefined in mathematics."
+    },
+    "hint": "Try dividing any number by zero on a calculator."
+}

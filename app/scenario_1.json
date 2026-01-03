@@ -1,0 +1,14 @@
+{
+    "id": 1,
+    "title": "Python Basics",
+    "statements": [
+        {"id": 1, "text": "Python is a case-sensitive language."},
+        {"id": 2, "text": "Comments in Python start with //."},
+        {"id": 3, "text": "Lists in Python are mutable."}
+    ],
+    "solution": {
+        "false_statement_id": 2,
+        "explanation": "In Python, comments start with the hash symbol (#), not //."
+    },
+    "hint": "Think about how you write a comment in Python code."
+}

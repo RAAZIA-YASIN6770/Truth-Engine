@@ -1,0 +1,14 @@
+{
+    "id": 6,
+    "title": "Biology Basics",
+    "statements": [
+        {"id": 1, "text": "Plants perform photosynthesis to make food."},
+        {"id": 2, "text": "The Sun is a planet."},
+        {"id": 3, "text": "The heart pumps blood throughout the body."}
+    ],
+    "solution": {
+        "false_statement_id": 2,
+        "explanation": "The Sun is a star, not a planet."
+    },
+    "hint": "It provides light and heat to the solar system."
+}

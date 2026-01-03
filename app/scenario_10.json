@@ -1,0 +1,14 @@
+{
+    "id": 10,
+    "title": "Python Functions",
+    "statements": [
+        {"id": 1, "text": "The 'def' keyword is used to define a function."},
+        {"id": 2, "text": "'import math' allows you to use math functions."},
+        {"id": 3, "text": "print() is used to get input from the user."}
+    ],
+    "solution": {
+        "false_statement_id": 3,
+        "explanation": "print() displays output. input() is used to get input from the user."
+    },
+    "hint": "One function talks to the screen, the other listens to the keyboard."
+}

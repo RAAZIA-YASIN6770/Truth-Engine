@@ -1,0 +1,14 @@
+{
+    "id": 3,
+    "title": "Physics Facts",
+    "statements": [
+        {"id": 1, "text": "Water freezes at 0 degrees Celsius."},
+        {"id": 2, "text": "The Earth revolves around the Sun."},
+        {"id": 3, "text": "Humans breathe in Carbon Dioxide and exhale Oxygen."}
+    ],
+    "solution": {
+        "false_statement_id": 3,
+        "explanation": "Humans breathe in Oxygen and exhale Carbon Dioxide."
+    },
+    "hint": "Think about what plants do versus what humans do."
+}

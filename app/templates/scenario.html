@@ -4,35 +4,135 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ scenario.title }}</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <style>
+        body {
+            /* Beautiful Gradient Background */
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .game-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+            padding: 40px;
+            width: 100%;
+            max-width: 700px;
+        }
+        h1 {
+            color: #4a4a4a;
+            font-weight: 700;
+        }
+        .list-group-item {
+            border: 1px solid #e9ecef;
+            margin-bottom: 10px;
+            border-radius: 10px !important;
+            transition: transform 0.2s;
+        }
+        .list-group-item:hover {
+            transform: scale(1.02);
+            background-color: #f8f9fa;
+            cursor: pointer;
+        }
+    </style>
 </head>
 <body>
+    <div class="container d-flex justify-content-center">
+        <div class="game-card">
     <h1>{{ scenario.title }}</h1>
-    <p>{{ scenario.description }}</p>
+    <p class="lead">Identify the <strong>False Statement</strong> among the options below:</p>
 
+    <div id="flash-messages">
     {% with messages = get_flashed_messages(with_categories=true) %}
       {% if messages %}
-        <ul>
         {% for category, message in messages %}
-          <li><strong>{{ category|upper }}:</strong> {{ message }}</li>
+          <div class="alert alert-{{ category }}">{{ message }}</div>
         {% endfor %}
-        </ul>
       {% endif %}
     {% endwith %}
+    </div>
 
-    <form method="POST">
-        <fieldset>
-            <legend>Select the False Statement:</legend>
-            {% for statement in scenario.statements %}
-            <div>
-                <input type="radio" id="stmt_{{ statement.id }}" name="statement_id" value="{{ statement.id }}" required>
-                <label for="stmt_{{ statement.id }}">
-                    <strong>{{ statement.source }}:</strong> {{ statement.text }}
-                </label>
-            </div>
+    {% if show_hint %}
+    <div class="alert alert-warning">
+        <strong>💡 Hint:</strong> {{ hint_text }}
+    </div>
+    {% endif %}
+
+    <form method="POST" id="quiz-form">
+        <div class="list-group">
+            {% for stmt in scenario.statements %}
+            <label class="list-group-item">
+                <input class="form-check-input me-1" type="radio" name="statement_id" value="{{ stmt.id }}" required>
+                {{ stmt.text }}
+            </label>
             {% endfor %}
-        </fieldset>
-        <br>
-        <button type="submit">Analyze Logic</button>
+        </div>
+        <button type="submit" class="btn btn-primary mt-3">Submit Analysis</button>
     </form>
+
+    <div class="mt-4 pt-3 border-top">
+        {% if not has_next_level %}
+            <div class="alert alert-success">
+                <h4>🎉 Congratulations!</h4>
+                <p>You have completed all available levels.</p>
+                <a href="/?id=1" class="btn btn-outline-success">Play Again</a>
+            </div>
+        {% endif %}
+    </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const form = document.getElementById('quiz-form');
+            if (form) {
+                form.addEventListener('submit', function(e) {
+                    e.preventDefault(); // Stop the browser from refreshing
+                    
+                    const formData = new FormData(this);
+                    const submitBtn = this.querySelector('button[type="submit"]');
+                    const originalText = submitBtn.innerText;
+                    
+                    // Visual feedback
+                    submitBtn.innerText = "Checking...";
+                    submitBtn.disabled = true;
+
+                    fetch(window.location.href, {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.redirect) {
+                            window.location.href = data.redirect; // Go to next level
+                        } else if (data.reload) {
+                            window.location.reload(); // Reload for final congrats
+                        } else {
+                            // Show error message without refreshing
+                            const msgDiv = document.getElementById('flash-messages');
+                            msgDiv.innerHTML = `<div class="alert alert-${data.success ? 'success' : 'danger'}">${data.message}</div>`;
+                            
+                            // Reset button
+                            submitBtn.innerText = originalText;
+                            submitBtn.disabled = false;
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        const msgDiv = document.getElementById('flash-messages');
+                        msgDiv.innerHTML = `<div class="alert alert-danger">System Error: ${error.message}. Please refresh.</div>`;
+                        submitBtn.innerText = originalText;
+                        submitBtn.disabled = false;
+                    });
+                });
+            }
+        });
+    </script>
 </body>
 </html>
