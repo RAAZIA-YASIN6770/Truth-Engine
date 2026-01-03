@@ -1,0 +1,22 @@
+{
+  "id": "scenario_1",
+  "title": "AI Loan Validation",
+  "description": "Analyze the logs from three AI subsystems regarding a loan application. Only ONE statement is false.",
+  "statements": [
+    {
+      "id": 1,
+      "source": "Risk Assessment AI",
+      "text": "The applicant has a high debt-to-income ratio."
+    },
+    {
+      "id": 2,
+      "source": "Approval AI",
+      "text": "The loan application is approved."
+    },
+    {
+      "id": 3,
+      "source": "Audit AI",
+      "text": "The Risk Assessment AI is correct."
+    }
+  ]
+}
