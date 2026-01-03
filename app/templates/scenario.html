@@ -8,7 +8,6 @@
 <body>
     <h1>{{ scenario.title }}</h1>
     <p>{{ scenario.description }}</p>
-    <p><strong>Attempts Used:</strong> {{ attempts }} / 3</p>
 
     {% with messages = get_flashed_messages(with_categories=true) %}
       {% if messages %}
@@ -21,7 +20,7 @@
     {% endwith %}
 
     <form method="POST">
-        <fieldset {% if locked %}disabled{% endif %}>
+        <fieldset>
             <legend>Select the False Statement:</legend>
             {% for statement in scenario.statements %}
             <div>
@@ -33,11 +32,7 @@
             {% endfor %}
         </fieldset>
         <br>
-        {% if locked %}
-            <button type="button" disabled>SYSTEM LOCKED</button>
-        {% else %}
-            <button type="submit">Analyze Logic</button>
-        {% endif %}
+        <button type="submit">Analyze Logic</button>
     </form>
 </body>
 </html>

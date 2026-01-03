@@ -8,7 +8,6 @@ This project strictly adheres to IEEE 830 Software Requirements Specifications (
 
 *   **Determinism**: The logic engine produces binary, reproducible results (Success/Failure) without randomness or heuristic hints.
 *   **Traceability**: All features map directly to the SRS and Planning documents.
-*   **State Management**: Server-side session management enforces rule constraints (e.g., maximum attempt limits) to ensure system integrity.
 
 ## 3. Technical Stack
 *   **Backend**: Python 3.10+ (Flask)
@@ -39,7 +38,3 @@ This project strictly adheres to IEEE 830 Software Requirements Specifications (
 2.  **Deduce**: Identify the logical contradiction. By definition, exactly one statement is false.
 3.  **Select**: Choose the statement believed to be false via the interface.
 4.  **Submit**: Click "Analyze Logic" to validate the deduction.
-5.  **Constraints**:
-    *   The system allows a maximum of **3 attempts**.
-    *   After 3 incorrect submissions, the system locks to prevent brute-force guessing.
-    *   No hints are provided; reliance is solely on logical deduction.
