@@ -1,7 +1,7 @@
 # Truth Engine
 
 ## 1. Project Purpose
-The Truth Engine is a deterministic, browser-based logical reasoning system. Its primary function is to present users with logic puzzles containing contradictory statements, requiring the identification of the single false statement based on strict logical deduction. The system is built to demonstrate adherence to formal software engineering practices.
+The Truth Engine is a deterministic, browser-based logical reasoning system. Its primary function is to present users with logic puzzles containing contradictory statements, requiring the identification of the single false statement based on strict logical deduction. The system is built to demonstrate adherence to formal software engineering practices.This is Farmative game.
 
 ## 2. Engineering Philosophy
 This project strictly adheres to IEEE 830 Software Requirements Specifications (SRS) and follows the Iterative Incremental Model. Key engineering principles include:
