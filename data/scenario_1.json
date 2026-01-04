@@ -21,6 +21,7 @@
   ],
   "solution": {
     "false_statement_id": 2,
-    "explanation": "If Statement 1 is false, Statement 3 is also false. If Statement 3 is false, Statement 1 is also false. Therefore, only Statement 2 can be false without creating a double contradiction."
+    "explanation": "If Statement 1 is false, Statement 3 is also false. If Statement 3 is false, Statement 1 is also false. Therefore, only Statement 2 can be false without creating a double contradiction.",
+    "hint": "Analyze the relationship between Statement 1 and Statement 3. If one is false, does it force the other to be false as well?"
   }
 }

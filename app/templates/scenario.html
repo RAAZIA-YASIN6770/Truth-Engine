@@ -3,136 +3,296 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ scenario.title }}</title>
+    <title>Truth Engine // Phase {{ current_id }}</title>
+    
+    <!-- Fonts: JetBrains Mono & Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    
+    <!-- Bootstrap 5 -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    
     <style>
+        :root {
+            --bg-dark: #050505;
+            --accent-cyan: #00f3ff; /* Electric Cyan */
+            --accent-white: #f0f6f6; /* Arctic White */
+            --glass-bg: rgba(20, 20, 25, 0.6);
+            --glass-border: rgba(0, 243, 255, 0.15);
+            --text-dim: #8899a6;
+            --font-mono: 'JetBrains Mono', monospace;
+            --font-sans: 'Inter', sans-serif;
+        }
+
         body {
-            /* Beautiful Gradient Background */
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background-color: var(--bg-dark);
+            color: var(--accent-white);
+            font-family: var(--font-sans);
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
+            overflow-x: hidden;
+            margin: 0;
         }
-        .game-card {
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 20px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
-            padding: 40px;
+
+        /* Cyber Grid Background */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: 
+                linear-gradient(rgba(0, 243, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 243, 255, 0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .phase-container {
+            max-width: 800px;
             width: 100%;
-            max-width: 700px;
+            padding: 1rem;
         }
+
+        /* Glassmorphism Card */
+        .glass-panel {
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            border-radius: 4px;
+            padding: 2.5rem;
+            box-shadow: 0 0 40px rgba(0, 0, 0, 0.6);
+            position: relative;
+        }
+
+        /* Decorative Corner */
+        .glass-panel::after {
+            content: "";
+            position: absolute;
+            top: -1px; right: -1px;
+            width: 20px; height: 20px;
+            border-top: 2px solid var(--accent-cyan);
+            border-right: 2px solid var(--accent-cyan);
+        }
+
+        .phase-header {
+            font-family: var(--font-mono);
+            color: var(--accent-cyan);
+            font-size: 0.85rem;
+            letter-spacing: 2px;
+            margin-bottom: 0.5rem;
+            opacity: 0.9;
+            text-transform: uppercase;
+        }
+
         h1 {
-            color: #4a4a4a;
+            font-family: var(--font-mono);
+            font-weight: 700;
+            font-size: 2rem;
+            margin-bottom: 2rem;
+            text-shadow: 0 0 15px rgba(0, 243, 255, 0.2);
+        }
+
+        /* Data Core (Statements) */
+        .data-core {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .data-node {
+            position: relative;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 1.2rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-family: var(--font-mono);
+            font-size: 0.95rem;
+            color: var(--text-dim);
+            display: flex;
+            align-items: center;
+        }
+
+        .data-node:hover {
+            border-color: var(--accent-cyan);
+            background: rgba(0, 243, 255, 0.05);
+            color: var(--accent-white);
+            box-shadow: 0 0 15px rgba(0, 243, 255, 0.15);
+            transform: translateX(4px);
+        }
+
+        /* Custom Radio Button */
+        .data-node input[type="radio"] {
+            appearance: none;
+            width: 14px;
+            height: 14px;
+            border: 1px solid var(--text-dim);
+            margin-right: 15px;
+            display: grid;
+            place-content: center;
+            transition: 0.2s;
+            background: transparent;
+        }
+
+        .data-node input[type="radio"]::before {
+            content: "";
+            width: 8px;
+            height: 8px;
+            background: var(--accent-cyan);
+            transform: scale(0);
+            transition: 0.2s;
+        }
+
+        .data-node input[type="radio"]:checked {
+            border-color: var(--accent-cyan);
+            box-shadow: 0 0 8px var(--accent-cyan);
+        }
+
+        .data-node input[type="radio"]:checked::before {
+            transform: scale(1);
+        }
+
+        .data-node:has(input:checked) {
+            border-color: var(--accent-cyan);
+            background: rgba(0, 243, 255, 0.08);
+            color: var(--accent-white);
+        }
+
+        /* Action Button */
+        .btn-cyber {
+            background: transparent;
+            border: 1px solid var(--accent-cyan);
+            color: var(--accent-cyan);
+            font-family: var(--font-mono);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 1rem;
+            margin-top: 2rem;
+            transition: 0.3s;
+            width: 100%;
             font-weight: 700;
         }
-        .list-group-item {
-            border: 1px solid #e9ecef;
-            margin-bottom: 10px;
-            border-radius: 10px !important;
-            transition: transform 0.2s;
+
+        .btn-cyber:hover {
+            background: var(--accent-cyan);
+            color: #000;
+            box-shadow: 0 0 25px rgba(0, 243, 255, 0.5);
         }
-        .list-group-item:hover {
-            transform: scale(1.02);
-            background-color: #f8f9fa;
-            cursor: pointer;
+
+        /* Alerts */
+        .alert {
+            background: transparent;
+            border: 1px solid;
+            border-radius: 0;
+            font-family: var(--font-mono);
+            font-size: 0.9rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .alert-success {
+            border-color: var(--accent-cyan);
+            color: var(--accent-cyan);
+            box-shadow: inset 0 0 15px rgba(0, 243, 255, 0.1);
+        }
+
+        .alert-danger {
+            border-color: #ff3366;
+            color: #ff3366;
+            opacity: 0.8;
+        }
+
+        .alert-warning {
+            border-color: #ffcc00;
+            color: #ffcc00;
+        }
+
+        /* Hint Section */
+        .hint-container {
+            margin-top: 2rem;
+            border-top: 1px dashed rgba(255, 255, 255, 0.15);
+            padding-top: 1.5rem;
+        }
+
+        .hint-title {
+            color: #ffcc00;
+            font-family: var(--font-mono);
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .hint-text {
+            color: var(--text-dim);
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        /* Scanline */
+        .scanline {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 4px;
+            background: rgba(0, 243, 255, 0.5);
+            opacity: 0.3;
+            animation: scan 6s linear infinite;
+            pointer-events: none;
+            z-index: 9999;
+        }
+
+        @keyframes scan {
+            0% { top: -10%; }
+            100% { top: 110%; }
         }
     </style>
 </head>
 <body>
-    <div class="container d-flex justify-content-center">
-        <div class="game-card">
-    <h1>{{ scenario.title }}</h1>
-    <p class="lead">Identify the <strong>False Statement</strong> among the options below:</p>
-
-    <div id="flash-messages">
-    {% with messages = get_flashed_messages(with_categories=true) %}
-      {% if messages %}
-        {% for category, message in messages %}
-          <div class="alert alert-{{ category }}">{{ message }}</div>
-        {% endfor %}
-      {% endif %}
-    {% endwith %}
-    </div>
-
-    {% if show_hint %}
-    <div class="alert alert-warning">
-        <strong>💡 Hint:</strong> {{ hint_text }}
-    </div>
-    {% endif %}
-
-    <form method="POST" id="quiz-form">
-        <div class="list-group">
-            {% for stmt in scenario.statements %}
-            <label class="list-group-item">
-                <input class="form-check-input me-1" type="radio" name="statement_id" value="{{ stmt.id }}" required>
-                {{ stmt.text }}
-            </label>
-            {% endfor %}
-        </div>
-        <button type="submit" class="btn btn-primary mt-3">Submit Analysis</button>
-    </form>
-
-    <div class="mt-4 pt-3 border-top">
-        {% if not has_next_level %}
-            <div class="alert alert-success">
-                <h4>🎉 Congratulations!</h4>
-                <p>You have completed all available levels.</p>
-                <a href="/?id=1" class="btn btn-outline-success">Play Again</a>
+    <div class="scanline"></div>
+    
+    <div class="phase-container">
+        <div class="glass-panel">
+            <div class="phase-header">
+                // PHASE_{{ "0" ~ current_id if current_id < 10 else current_id }}
             </div>
-        {% endif %}
-    </div>
+            <h1>{{ scenario.title }}</h1>
+            
+            {% with messages = get_flashed_messages(with_categories=true) %}
+              {% if messages %}
+                {% for category, message in messages %}
+                  <div class="alert alert-{{ category }} d-flex align-items-center">
+                    <span class="me-2">>></span> {{ message }}
+                  </div>
+                {% endfor %}
+              {% endif %}
+            {% endwith %}
+
+            <form method="POST">
+                <div class="data-core">
+                    {% for stmt in scenario.statements %}
+                    <label class="data-node">
+                        <input type="radio" name="statement_id" value="{{ stmt.id }}">
+                        <span>{{ stmt.text }}</span>
+                    </label>
+                    {% endfor %}
+                </div>
+                <button type="submit" class="btn btn-cyber">INITIATE_ANALYSIS()</button>
+            </form>
+
+            {% if show_hint %}
+            <div class="hint-container">
+                <div class="hint-title">
+                    <span>⚠</span> DIAGNOSTIC_HINT
+                </div>
+                <p class="hint-text">{{ hint_text }}</p>
+            </div>
+            {% endif %}
         </div>
     </div>
 
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            const form = document.getElementById('quiz-form');
-            if (form) {
-                form.addEventListener('submit', function(e) {
-                    e.preventDefault(); // Stop the browser from refreshing
-                    
-                    const formData = new FormData(this);
-                    const submitBtn = this.querySelector('button[type="submit"]');
-                    const originalText = submitBtn.innerText;
-                    
-                    // Visual feedback
-                    submitBtn.innerText = "Checking...";
-                    submitBtn.disabled = true;
-
-                    fetch(window.location.href, {
-                        method: 'POST',
-                        body: formData,
-                        headers: {
-                            'X-Requested-With': 'XMLHttpRequest'
-                        }
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.redirect) {
-                            window.location.href = data.redirect; // Go to next level
-                        } else if (data.reload) {
-                            window.location.reload(); // Reload for final congrats
-                        } else {
-                            // Show error message without refreshing
-                            const msgDiv = document.getElementById('flash-messages');
-                            msgDiv.innerHTML = `<div class="alert alert-${data.success ? 'success' : 'danger'}">${data.message}</div>`;
-                            
-                            // Reset button
-                            submitBtn.innerText = originalText;
-                            submitBtn.disabled = false;
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        const msgDiv = document.getElementById('flash-messages');
-                        msgDiv.innerHTML = `<div class="alert alert-danger">System Error: ${error.message}. Please refresh.</div>`;
-                        submitBtn.innerText = originalText;
-                        submitBtn.disabled = false;
-                    });
-                });
-            }
-        });
-    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

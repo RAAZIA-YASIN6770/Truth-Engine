@@ -4,6 +4,20 @@ from app.services.logic_engine import LogicEngine  # type: ignore
 
 bp = Blueprint('main', __name__)
 
+def get_scenario_hint(scenario):
+    """
+    Helper method to extract hint from scenario data.
+    Checks both 'solution.hint' and root 'hint'.
+    """
+    return scenario.get('solution', {}).get('hint') or scenario.get('hint') or "Hint: Review the statements carefully."
+
+@bp.route('/complete')
+def complete():
+    """
+    Displays the completion screen after all levels are finished.
+    """
+    return render_template('completion.html')
+
 @bp.route('/', methods=['GET', 'POST'])
 def index():
     """
@@ -47,18 +61,33 @@ def index():
                             return jsonify({'success': True, 'redirect': url_for('main.index', id=next_id)})
                         return redirect(url_for('main.index', id=next_id))
                     else:
-                        print(f"Next level {next_id} not found. Game Complete or File Missing.")
+                        # Game Complete: Redirect to completion page
+                        flash(f"Correct! {result.get('details', '')}", 'success')
+                        
                         if is_ajax:
-                            return jsonify({'success': True, 'reload': True})
-                            
-                        flash(result['message'], 'success')
-                        if result.get('details'):
-                            flash(result['details'], 'info')
+                            return jsonify({'success': True, 'redirect': url_for('main.complete')})
+                        
+                        return redirect(url_for('main.complete'))
                 else:
                     session[attempt_key] += 1
+                    
+                    # Calculate hint text using the new method
+                    hint_text = None
+                    if session[attempt_key] >= 2:
+                        hint_text = get_scenario_hint(scenario)
+                        print(f"DEBUG: Hint triggered for Level {scenario_id}. Text: {hint_text}")
+
                     if is_ajax:
-                        return jsonify({'success': False, 'message': result['message']})
+                        response_data = {'success': False, 'message': result['message']}
+                        if hint_text:
+                            response_data['show_hint'] = True
+                            response_data['hint_text'] = hint_text
+                        return jsonify(response_data)
+                    
                     flash(result['message'], 'danger')
+                    # Force hint display via flash message as a fallback
+                    if hint_text:
+                        flash(f"💡 Hint: {hint_text}", 'warning')
             except Exception as e:
                 # Catch ALL errors to prevent 500 crash and refresh
                 if is_ajax:
@@ -74,10 +103,10 @@ def index():
     hint_text = ""
     if session.get(attempt_key, 0) >= 2:
         show_hint = True
-        hint_text = scenario.get('hint', "No hint available for this level.")
+        hint_text = get_scenario_hint(scenario)
 
     # Check if next level exists
     next_id = scenario_id + 1
     has_next_level = loader.load_scenario(f"scenario_{next_id}.json") is not None
 
-    return render_template('scenario.html', scenario=scenario, show_hint=show_hint, hint_text=hint_text, next_id=next_id, has_next_level=has_next_level)
+    return render_template('scenario.html', scenario=scenario, show_hint=show_hint, hint_text=hint_text, next_id=next_id, has_next_level=has_next_level, current_id=scenario_id)
