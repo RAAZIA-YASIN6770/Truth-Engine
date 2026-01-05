@@ -16,6 +16,7 @@
         </header>
 
         <!-- Level Selection (Glass Tiles) -->
+        {% if not scenario %}
         <div class="level-grid">
             <!-- Example Loop for Levels -->
             {% for level in levels %}
@@ -25,24 +26,35 @@
             </a>
             {% endfor %}
         </div>
+        {% endif %}
 
         <!-- Game Area -->
         <main class="game-area">
             {% if scenario %}
+                <a href="/" style="display: inline-block; margin-bottom: 1rem; text-decoration: none; color: inherit; font-size: 0.9em;">&larr; Back to Levels</a>
                 <div class="glass-panel" style="padding: 1rem; margin-bottom: 1rem;">
                     <h2 style="margin:0; font-weight:400;">{{ scenario.title }}</h2>
                 </div>
 
-                <form id="quiz-form" method="POST">
+                {% if result %}
+                <div class="glass-panel" style="padding: 1rem; margin-bottom: 1rem; text-align: center; border: 2px solid rgba(255,255,255,0.2);">
+                    <h3 style="margin-top: 0;">{% if result.success %}Analysis Correct{% else %}Analysis Incorrect{% endif %}</h3>
+                    <p>{{ result.explanation }}</p>
+                    <a href="/" class="glass-panel" style="display: inline-block; text-decoration: none; margin-top: 1rem; padding: 0.8rem 2rem; background: rgba(255,255,255,0.1); color: inherit; border: 1px solid rgba(255,255,255,0.2);">Back to Levels</a>
+                </div>
+                {% else %}
+                <form id="quiz-form" method="POST" action="/scenario/{{ scenario.id }}">
+                    <input type="hidden" name="return_result" value="true">
                     {% for statement in scenario.statements %}
-                    <label class="glass-panel card">
-                        <input type="radio" name="statement_id" value="{{ statement.id }}" style="display:none;" onchange="selectCard(this)">
+                    <label class="glass-panel card" style="display: flex; align-items: center; margin-bottom: 1rem; cursor: pointer; padding: 1rem;">
+                        <input type="radio" name="statement_id" value="{{ statement.id }}" style="margin-right: 1rem;" onchange="selectCard(this)" required>
                         <span class="statement-text">{{ statement.text }}</span>
                     </label>
                     {% endfor %}
                     
                     <button type="submit" class="glass-panel submit-btn">Submit Analysis</button>
                 </form>
+                {% endif %}
             {% else %}
                 <div class="glass-panel card">
                     <p>Select a level to begin initialization.</p>
@@ -56,10 +68,10 @@
         function selectCard(input) {
             // Remove active style from all cards
             document.querySelectorAll('.card').forEach(c => {
-                c.style.background = 'var(--glass-bg)';
+                c.style.background = '';
             });
             // Add active style to selected card parent
-            input.parentElement.style.background = 'rgba(255, 255, 255, 0.15)';
+            input.parentElement.style.background = 'rgba(255, 255, 255, 0.3)';
         }
     </script>
 </body>

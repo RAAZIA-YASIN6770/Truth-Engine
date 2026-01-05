@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, session
+from flask import Flask, request, jsonify, session, render_template
 import os
 from logic_engine import LogicEngine
 
@@ -10,20 +10,90 @@ def create_app():
     # Initialize Logic Engine
     logic_engine = LogicEngine()
 
-    # Mock Database / Scenario for MVP
-    current_scenario = {
-        "id": 1, 
-        "correct_answer": "Option A",
-        "statements": [
-            {"text": "Sky is blue", "is_true": True},
-            {"text": "Water is dry", "is_true": False}, # The lie
-            {"text": "Fire is hot", "is_true": True}
-        ]
+    # Mock Levels Data (For the Level Select Grid)
+    levels = [
+        {"id": 1, "title": "Basic Logic"},
+        {"id": 7, "title": "Python Logic"},
+        {"id": 10, "title": "Python Functions"}
+    ]
+
+    # Mock Database with multiple scenarios
+    scenarios_db = {
+        1: {
+            "id": 1, 
+            "title": "Basic Logic",
+            "statements": [
+                {"id": 1, "text": "Sky is blue", "is_true": True},
+                {"id": 2, "text": "Water is dry", "is_true": False},
+                {"id": 3, "text": "Fire is hot", "is_true": True}
+            ],
+            "solution": {"explanation": "Water is liquid and wet, not dry."}
+        },
+        7: {
+            "id": 7, 
+            "title": "Python Logic",
+            "statements": [
+                {"id": 1, "text": "Lists are mutable", "is_true": True},
+                {"id": 2, "text": "Tuples are mutable", "is_true": False},
+                {"id": 3, "text": "Dictionaries have keys", "is_true": True}
+            ],
+            "solution": {"explanation": "Tuples are immutable in Python."}
+        },
+        10: {
+            "id": 10, 
+            "title": "Python Functions",
+            "statements": [
+                {"id": 1, "text": "def creates functions", "is_true": True},
+                {"id": 2, "text": "print() returns a string", "is_true": False},
+                {"id": 3, "text": "return exits function", "is_true": True}
+            ],
+            "solution": {"explanation": "print() displays text but returns None."}
+        }
     }
 
     @app.route('/')
     def index():
-        return "Truth Engine Interface Active", 200
+        # Show the level selection grid
+        return render_template('index.html', levels=levels, scenario=None)
+
+    @app.route('/scenario/<int:scenario_id>', methods=['GET', 'POST'])
+    def scenario_route(scenario_id):
+        # Load scenario from DB, default to Level 1 if not found
+        if scenario_id in scenarios_db:
+            scenario_data = scenarios_db[scenario_id].copy()
+        else:
+            scenario_data = scenarios_db[1].copy()
+        scenario_data['id'] = scenario_id
+        
+        if request.method == 'POST':
+            # Handle the form submission
+            print(f"DEBUG: Form submitted for Scenario {scenario_id}")
+            user_selection = request.form.get('statement_id')
+            
+            # Find the selected statement safely
+            selected_stmt = None
+            if user_selection:
+                for s in scenario_data['statements']:
+                    if str(s['id']) == str(user_selection):
+                        selected_stmt = s
+                        break
+            
+            is_correct = False
+            # The correct answer is the FALSE statement
+            if selected_stmt and selected_stmt['is_true'] is False:
+                is_correct = True
+            
+            result = {
+                "success": is_correct,
+                "explanation": scenario_data['solution']['explanation'] if is_correct else "Incorrect. That statement is true."
+            }
+            
+            print(f"DEBUG: Rendering result: {result}")
+            # Render the SAME page with the result (shows Back button)
+            return render_template('index.html', levels=levels, scenario=scenario_data, result=result)
+
+        # GET request: Show form, no result yet
+        return render_template('index.html', levels=levels, scenario=scenario_data, result=None)
 
     @app.route('/submit', methods=['POST'])
     def submit():
@@ -38,7 +108,7 @@ def create_app():
         user_selection = data.get('selection')
         
         # Evaluate
-        is_correct = logic_engine.evaluate(user_selection, current_scenario)
+        is_correct = logic_engine.evaluate(user_selection, scenarios_db[1])
 
         if is_correct:
             session['attempts'] = 0
