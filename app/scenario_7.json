@@ -1,6 +1,7 @@
 {
     "id": 7,
     "title": "Python Logic",
+    "description": "Please select the wrong statement.",
     "statements": [
         {"id": 1, "text": "int('10') converts a string to an integer."},
         {"id": 2, "text": "range(3) generates numbers 0, 1, 2."},

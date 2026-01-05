@@ -19,7 +19,7 @@
         <div class="level-grid">
             <!-- Example Loop for Levels -->
             {% for i in range(1, 11) %}
-            <a href="/level/{{ i }}" class="glass-panel level-btn {% if current_level == i %}active{% endif %}">
+            <a href="/scenario/{{ i }}" class="glass-panel level-btn {% if current_id == i %}active{% endif %}">
                 {{ i }}
             </a>
             {% endfor %}
@@ -32,10 +32,10 @@
                     <h2 style="margin:0; font-weight:400;">{{ scenario.title }}</h2>
                 </div>
 
-                <form id="quiz-form" action="/submit" method="POST">
+                <form id="quiz-form" method="POST">
                     {% for statement in scenario.statements %}
                     <label class="glass-panel card">
-                        <input type="radio" name="answer" value="{{ statement.id }}" style="display:none;" onchange="selectCard(this)">
+                        <input type="radio" name="statement_id" value="{{ statement.id }}" style="display:none;" onchange="selectCard(this)">
                         <span class="statement-text">{{ statement.text }}</span>
                     </label>
                     {% endfor %}

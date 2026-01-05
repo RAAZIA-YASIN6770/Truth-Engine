@@ -18,22 +18,35 @@ def complete():
     """
     return render_template('completion.html')
 
-@bp.route('/', methods=['GET', 'POST'])
+@bp.route('/')
 def index():
+    """
+    Landing page with game rules and scenario selection.
+    """
+    return render_template('index.html')
+
+@bp.route('/scenario/<scenario_id>', methods=['GET', 'POST'])
+def play_scenario(scenario_id):
     """
     Main game interface.
     Loads the scenario and handles user submissions.
     """
-    # Get scenario ID from URL parameter (default to 1)
-    scenario_id = request.args.get('id', 1, type=int)
+    # Try to parse scenario_id as int, otherwise keep as string
+    try:
+        scenario_id_int = int(scenario_id)
+        load_id = scenario_id_int
+    except ValueError:
+        scenario_id_int = None
+        load_id = scenario_id
+
     loader = ScenarioLoader()
-    scenario = loader.load_scenario(f"scenario_{scenario_id}.json")
+    scenario = loader.load_scenario(f"scenario_{load_id}.json")
 
     if not scenario:
         return "System Error: Scenario data could not be loaded.", 500
 
     # Session key for tracking attempts on this specific scenario
-    attempt_key = f'attempts_{scenario_id}'
+    attempt_key = f'attempts_{load_id}'
     if attempt_key not in session:
         session[attempt_key] = 0
 
@@ -50,24 +63,25 @@ def index():
                     session[attempt_key] = 0  # Reset attempts on success
                     
                     # Check if next level exists for auto-redirect
-                    next_id = scenario_id + 1
-                    next_scenario = loader.load_scenario(f"scenario_{next_id}.json")
+                    if scenario_id_int is not None:
+                        next_id = scenario_id_int + 1
+                        next_scenario = loader.load_scenario(f"scenario_{next_id}.json")
+                        
+                        if next_scenario:
+                            msg = f"Correct! {result.get('details', '')}"
+                            flash(msg, 'success')
+                            
+                            if is_ajax:
+                                return jsonify({'success': True, 'redirect': url_for('main.play_scenario', scenario_id=next_id)})
+                            return redirect(url_for('main.play_scenario', scenario_id=next_id))
                     
-                    if next_scenario:
-                        msg = f"Correct! {result.get('details', '')}"
-                        flash(msg, 'success')
-                        
-                        if is_ajax:
-                            return jsonify({'success': True, 'redirect': url_for('main.index', id=next_id)})
-                        return redirect(url_for('main.index', id=next_id))
-                    else:
-                        # Game Complete: Redirect to completion page
-                        flash(f"Correct! {result.get('details', '')}", 'success')
-                        
-                        if is_ajax:
-                            return jsonify({'success': True, 'redirect': url_for('main.complete')})
-                        
-                        return redirect(url_for('main.complete'))
+                    # Game Complete or Non-integer ID finished: Redirect to completion page
+                    flash(f"Correct! {result.get('details', '')}", 'success')
+                    
+                    if is_ajax:
+                        return jsonify({'success': True, 'redirect': url_for('main.complete')})
+                    
+                    return redirect(url_for('main.complete'))
                 else:
                     session[attempt_key] += 1
                     
@@ -75,7 +89,7 @@ def index():
                     hint_text = None
                     if session[attempt_key] >= 2:
                         hint_text = get_scenario_hint(scenario)
-                        print(f"DEBUG: Hint triggered for Level {scenario_id}. Text: {hint_text}")
+                        print(f"DEBUG: Hint triggered for Level {load_id}. Text: {hint_text}")
 
                     if is_ajax:
                         response_data = {'success': False, 'message': result['message']}
@@ -106,7 +120,10 @@ def index():
         hint_text = get_scenario_hint(scenario)
 
     # Check if next level exists
-    next_id = scenario_id + 1
-    has_next_level = loader.load_scenario(f"scenario_{next_id}.json") is not None
+    has_next_level = False
+    next_id = None
+    if scenario_id_int is not None:
+        next_id = scenario_id_int + 1
+        has_next_level = loader.load_scenario(f"scenario_{next_id}.json") is not None
 
-    return render_template('scenario.html', scenario=scenario, show_hint=show_hint, hint_text=hint_text, next_id=next_id, has_next_level=has_next_level, current_id=scenario_id)
+    return render_template('index.html', scenario=scenario, show_hint=show_hint, hint_text=hint_text, next_id=next_id, has_next_level=has_next_level, current_id=load_id)

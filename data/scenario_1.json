@@ -1,7 +1,7 @@
 {
-  "id": "scenario_1",
+  "id": 1,
   "title": "AI Loan Validation",
-  "description": "Analyze the logs from three AI subsystems regarding a loan application. Only ONE statement is false.",
+  "description": "Analyze the logs from three AI subsystems regarding a loan application. Only ONE statement is false. Please select the wrong statement.",
   "statements": [
     {
       "id": 1,
