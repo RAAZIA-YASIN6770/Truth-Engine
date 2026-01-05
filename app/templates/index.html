@@ -18,9 +18,10 @@
         <!-- Level Selection (Glass Tiles) -->
         <div class="level-grid">
             <!-- Example Loop for Levels -->
-            {% for i in range(1, 11) %}
-            <a href="/scenario/{{ i }}" class="glass-panel level-btn {% if current_id == i %}active{% endif %}">
-                {{ i }}
+            {% for level in levels %}
+            <a href="/scenario/{{ level.id }}" class="glass-panel level-btn {% if current_id == level.id %}active{% endif %}" style="text-decoration: none; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 0.5rem;">
+                <span style="font-size: 1.2rem; font-weight: bold; display: block;">{{ level.id }}</span>
+                <span style="font-size: 0.75rem; opacity: 0.8; display: block; margin-top: 4px; line-height: 1.2;">{{ level.title }}</span>
             </a>
             {% endfor %}
         </div>

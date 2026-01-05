@@ -11,6 +11,16 @@ def get_scenario_hint(scenario):
     """
     return scenario.get('solution', {}).get('hint') or scenario.get('hint') or "Hint: Review the statements carefully."
 
+def get_levels():
+    """Helper to get list of levels with titles."""
+    loader = ScenarioLoader()
+    levels = []
+    for i in range(1, 11):
+        scenario = loader.load_scenario(f"scenario_{i}.json")
+        title = scenario.get('title', 'Locked') if scenario else "Locked"
+        levels.append({'id': i, 'title': title})
+    return levels
+
 @bp.route('/complete')
 def complete():
     """
@@ -23,7 +33,7 @@ def index():
     """
     Landing page with game rules and scenario selection.
     """
-    return render_template('index.html')
+    return render_template('index.html', levels=get_levels())
 
 @bp.route('/scenario/<scenario_id>', methods=['GET', 'POST'])
 def play_scenario(scenario_id):
@@ -126,4 +136,4 @@ def play_scenario(scenario_id):
         next_id = scenario_id_int + 1
         has_next_level = loader.load_scenario(f"scenario_{next_id}.json") is not None
 
-    return render_template('index.html', scenario=scenario, show_hint=show_hint, hint_text=hint_text, next_id=next_id, has_next_level=has_next_level, current_id=load_id)
+    return render_template('index.html', scenario=scenario, show_hint=show_hint, hint_text=hint_text, next_id=next_id, has_next_level=has_next_level, current_id=load_id, levels=get_levels())
